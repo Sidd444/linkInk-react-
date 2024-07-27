@@ -7,8 +7,8 @@ const orderSchema = new mongoose.Schema({
         required: true
     },
     isSet: {
-        type: Boolean,
-        default: false
+        type: Boolean, //if isSet and owned by then redirect to given link
+        default: false //is linkedTo is not null then true
     },
     elementId: {
         type: mongoose.Schema.ObjectId,

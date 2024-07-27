@@ -8,7 +8,7 @@ router.post('/signup', async (req, res) => {
     const { name, email, password } = req.body;
 
     try {
-        // Check if user with this email already exists
+        
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(400).json({ message: 'Email already exists' });
@@ -16,11 +16,11 @@ router.post('/signup', async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Create new user
+        
         const newUser = new User({ name, email, password: hashedPassword });
         await newUser.save();
 
-        // Create and return JWT
+        
         const token = jwt.sign({ id: newUser._id }, 'your_jwt_secret', { expiresIn: '1h' });
         res.status(201).json({ token });
     } catch (error) {
@@ -32,19 +32,19 @@ router.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        // Find user by email
+        
         const user = await User.findOne({ email });
         if (!user) {
             return res.status(400).json({ message: 'Invalid email or password' });
         }
 
-        // Check password
+        
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(400).json({ message: 'Invalid email or password' });
         }
 
-        // Create and return JWT
+        
         const token = jwt.sign({ id: user._id }, 'your_jwt_secret', { expiresIn: '1h' });
         res.status(200).json({ token });
     } catch (error) {
