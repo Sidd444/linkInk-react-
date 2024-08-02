@@ -17,7 +17,7 @@ const orderSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        default: pending
+        default: 'pending'
     },
     linkedTo: {
         type: String
@@ -35,4 +35,6 @@ const orderSchema = new mongoose.Schema({
 
 const Order = mongoose.models.orders || mongoose.model("orders", orderSchema)
 
-export default Order
+
+
+module.exports = Order

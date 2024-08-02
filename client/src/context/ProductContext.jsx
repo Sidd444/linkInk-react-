@@ -27,8 +27,17 @@ const ProductProvider = ({ children }) => {
     }
   };
 
+  const deleteProduct = async (productId) => {
+    try {
+      await axios.delete(`http://localhost:5000/api/products/${productId}`);
+      setProducts(products.filter((product) => product._id !== productId));
+    } catch (error) {
+      console.error('Error deleting product:', error);
+    }
+  };
+
   return (
-    <ProductContext.Provider value={{ products, addProduct }}>
+    <ProductContext.Provider value={{ products, addProduct, deleteProduct }}>
       {children}
     </ProductContext.Provider>
   );

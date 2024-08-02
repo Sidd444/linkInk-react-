@@ -1,10 +1,12 @@
 import React, { useContext, useState } from 'react';
 import { ProductContext } from '../context/ProductContext';
 import { AuthContext } from '../context/AuthContext';
+import { OrderContext } from '../context/OrderContext'; 
 import { toast } from 'react-hot-toast';
 
 const Products = () => {
-  const { products, addProduct } = useContext(ProductContext);
+  const { products, addProduct, deleteProduct } = useContext(ProductContext);
+  const { addOrder } = useContext(OrderContext); 
   const { user } = useContext(AuthContext);
   const [newProduct, setNewProduct] = useState({
     image: '',
@@ -18,12 +20,47 @@ const Products = () => {
       return;
     }
 
+    if (!newProduct.image || !newProduct.title || !newProduct.description) {
+      toast.error('All fields are required');
+      return;
+    }
+
     try {
       await addProduct({ ...newProduct, user: user._id });
       toast.success('Product added successfully!');
       setNewProduct({ image: '', description: '', title: '' });
     } catch (error) {
       toast.error('Failed to add product');
+    }
+  };
+
+  const handleDeleteProduct = async (productId) => {
+    try {
+      await deleteProduct(productId);
+      toast.success('Product deleted successfully!');
+    } catch (error) {
+      toast.error('Failed to delete product');
+    }
+  };
+
+  const handleAddToCart = async (productId, ownerId) => {
+    if (!user) {
+      toast.error('You need to be logged in to add a product to the cart');
+      return;
+    }
+
+    try {
+      await addOrder({
+        ownedBy: ownerId,
+        elementId: productId,
+        linkedTo: '', // Initially blank, can be updated later
+        address: '',  // Initially blank, can be updated later
+        pincode: null, // Initially blank, can be updated later
+        phoneNo: null // Initially blank, can be updated later
+      });
+      toast.success('Product added to cart!');
+    } catch (error) {
+      toast.error('Failed to add product to cart');
     }
   };
 
@@ -67,6 +104,24 @@ const Products = () => {
               <img src={product.image} alt={product.title} className="w-full h-48 object-cover rounded-md mb-4" />
               <h3 className="text-xl font-bold text-white">{product.title}</h3>
               <p className="text-gray-400">{product.description}</p>
+              {user && (
+                <div className="flex space-x-4 mt-4">
+                  {user._id === product.user && (
+                    <button
+                      onClick={() => handleDeleteProduct(product._id)}
+                      className="px-4 py-2 text-white bg-red-600 rounded-md hover:bg-red-500"
+                    >
+                      Delete
+                    </button>
+                  )}
+                  <button
+                    onClick={() => handleAddToCart(product._id, product.user)}
+                    className="px-4 py-2 text-white bg-green-600 rounded-md hover:bg-green-500"
+                  >
+                    Add to Cart
+                  </button>
+                </div>
+              )}
             </div>
           ))}
         </div>
