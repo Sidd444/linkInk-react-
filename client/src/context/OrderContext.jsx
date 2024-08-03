@@ -22,13 +22,14 @@ export const OrderProvider = ({ children }) => {
         console.error('No token found, user might not be logged in');
         return;
       }
+      console.log('Token:', token); 
   
       const response = await axios.post(
         'http://localhost:5000/api/orders',
         { productId },
         {
           headers: {
-            Authorization: `Bearer ${token}`, // Correctly include the token
+            Authorization: `Bearer ${token}`, 
           },
         }
       );
