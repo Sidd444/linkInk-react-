@@ -17,12 +17,30 @@ export const OrderProvider = ({ children }) => {
 
   const addOrder = async (productId) => {
     try {
-      const response = await axios.post('http://localhost:5000/api/orders', { productId });
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error('No token found, user might not be logged in');
+        return;
+      }
+  
+      const response = await axios.post(
+        'http://localhost:5000/api/orders',
+        { productId },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Correctly include the token
+          },
+        }
+      );
+  
       setOrders([...orders, response.data]);
     } catch (error) {
-      console.error('Error adding order:', error);
+      console.error('Error adding order:', error.response ? error.response.data : error);
     }
   };
+  
+  
+  
 
   const updateOrder = async (orderId, updates) => {
     try {
@@ -56,6 +74,5 @@ export const OrderProvider = ({ children }) => {
     </OrderContext.Provider>
   );
 };
-
 
 export default OrderProvider;

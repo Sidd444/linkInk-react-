@@ -10,7 +10,9 @@ const app = express();
 
 
 app.use(bodyParser.json());
-app.use(cors());
+app.use(cors({
+    credentials: true, 
+  }));
 
 
 const dbURI = "mongodb+srv://sid:3t19fBPYKNyYX3zy@linkink.ghuqdwu.mongodb.net/?retryWrites=true&w=majority&appName=linkInk";

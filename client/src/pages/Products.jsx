@@ -49,15 +49,13 @@ const Products = () => {
       return;
     }
 
+    if (!productId || typeof productId !== 'string') {
+      toast.error('Invalid product ID');
+      return;
+    }
+
     try {
-      await addOrder({
-        ownedBy: ownerId,
-        elementId: productId,
-        linkedTo: '', // Initially blank, can be updated later
-        address: '',  // Initially blank, can be updated later
-        pincode: null, // Initially blank, can be updated later
-        phoneNo: null // Initially blank, can be updated later
-      });
+      await addOrder(productId); // Pass only the productId as per the backend expectation
       toast.success('Product added to cart!');
     } catch (error) {
       toast.error('Failed to add product to cart');

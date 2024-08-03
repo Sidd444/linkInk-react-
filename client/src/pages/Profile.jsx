@@ -1,27 +1,29 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import { OrderContext } from "../context/OrderContext";
 
 const Profile = () => {
-  const { user, fetchProducts } = useContext(AuthContext);
-  const [products, setProducts] = useState([]);
+  const { user } = useContext(AuthContext);
+  const { fetchOrdersByUser } = useContext(OrderContext); // Fetch orders by the current user
+  const [orders, setOrders] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     if (!user) {
       navigate("/login");
     } else {
-      const getProducts = async () => {
+      const getOrders = async () => {
         try {
-          const userProducts = await fetchProducts();
-          setProducts(userProducts);
+          const userOrders = await fetchOrdersByUser(user._id);
+          setOrders(userOrders);
         } catch (error) {
-          console.error("Failed to fetch products", error);
+          console.error("Failed to fetch orders", error);
         }
       };
-      getProducts();
+      getOrders();
     }
-  }, [user, navigate, fetchProducts]);
+  }, [user, navigate, fetchOrdersByUser]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-900">
@@ -31,17 +33,17 @@ const Profile = () => {
           <div className="space-y-4">
             <p className="text-white">Full name: {user.name}</p>
             <p className="text-white">Email: {user.email}</p>
-            <h3 className="text-xl font-bold text-white">Products:</h3>
-            {products.length > 0 ? (
+            <h3 className="text-xl font-bold text-white">Products in Cart:</h3>
+            {orders.length > 0 ? (
               <ul className="list-disc pl-5 text-white">
-                {products.map((product) => (
-                  <li key={product.id}>
-                    {product.name} - {product.description}
+                {orders.map((order) => (
+                  <li key={order._id}>
+                    Product ID: {order.elementId} - Status: {order.status}
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="text-white">No products added.</p>
+              <p className="text-white">No products in cart.</p>
             )}
           </div>
         ) : (
