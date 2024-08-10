@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect } from "react";
 import axios from "axios";
+import SERVER_URL from '../config/config';
 
 export const AuthContext = createContext();
 
@@ -11,7 +12,7 @@ const AuthProvider = ({ children }) => {
     if (token) {
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       axios
-        .get("http://localhost:5000/api/users/me")
+        .get(`${SERVER_URL}/api/users/me`)
         .then((res) => setUser(res.data))
         .catch(() => setUser(null));
     }
@@ -19,7 +20,7 @@ const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     const res = await axios.post(
-      "http://localhost:5000/api/users/login",
+      `${SERVER_URL}/api/users/login`,
       {
         email,
         password,
@@ -28,7 +29,7 @@ const AuthProvider = ({ children }) => {
     localStorage.setItem("token", res.data.token);
     axios.defaults.headers.common["Authorization"] = `Bearer ${res.data.token}`;
     const userRes = await axios.get(
-      "http://localhost:5000/api/users/me"
+      `${SERVER_URL}/api/users/me`
     );
     setUser(userRes.data);
   };
@@ -36,7 +37,7 @@ const AuthProvider = ({ children }) => {
   const signup = async (name, email, password) => {
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/users/signup",
+        `${SERVER_URL}/api/users/signup`,
         {
           name,
           email,
@@ -48,7 +49,7 @@ const AuthProvider = ({ children }) => {
         "Authorization"
       ] = `Bearer ${res.data.token}`;
       const userRes = await axios.get(
-        "http://localhost:5000/api/users/me"
+        `${SERVER_URL}/api/users/me`
       );
       setUser(userRes.data);
     } catch (error) {
@@ -58,7 +59,7 @@ const AuthProvider = ({ children }) => {
 
   const fetchProducts = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/users/products");
+      const res = await axios.get(`${SERVER_URL}/api/users/products`);
       return res.data;
     } catch (error) {
       console.error("Error fetching products", error);

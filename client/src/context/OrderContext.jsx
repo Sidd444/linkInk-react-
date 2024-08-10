@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import SERVER_URL from '../config/config';
 
 export const OrderContext = createContext();
 
@@ -25,7 +26,7 @@ export const OrderProvider = ({ children }) => {
       console.log('Token:', token); 
   
       const response = await axios.post(
-        'http://localhost:5000/api/orders',
+        `${SERVER_URL}/api/orders`,
         { productId },
         {
           headers: {
@@ -45,7 +46,7 @@ export const OrderProvider = ({ children }) => {
 
   const updateOrder = async (orderId, updates) => {
     try {
-      const response = await axios.put(`http://localhost:5000/api/orders/${orderId}`, updates);
+      const response = await axios.put(`${SERVER_URL}/api/orders/${orderId}`, updates);
       setOrders(
         orders.map(order =>
           order._id === orderId ? response.data : order
@@ -58,7 +59,7 @@ export const OrderProvider = ({ children }) => {
 
   const deleteOrder = async (orderId) => {
     try {
-      await axios.delete(`http://localhost:5000/api/orders/${orderId}`);
+      await axios.delete(`${SERVER_URL}/api/orders/${orderId}`);
       setOrders(orders.filter(order => order._id !== orderId));
     } catch (error) {
       console.error('Error deleting order:', error);
